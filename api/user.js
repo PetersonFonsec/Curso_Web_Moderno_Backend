@@ -62,11 +62,12 @@ module.exports = app => {
     const getById = ( req, res ) => {
         const { id } = req.params
         
-        if( !id) throw 'Id por parametro é obrigatório'
+        if( !id ) throw 'Id por parametro é obrigatório'
 
         app.db('users')
             .select('id','name', 'email', 'admin')
             .where({ id })
+            .first()
             .then( users => res.json(users) )
             .catch( err => res.status(500).send(err) )
     }

@@ -12,6 +12,7 @@ module.exports = app => {
         .get(app.api.category.get)
 
      app.route('/categories/:id')
-         .delete(app.api.category.remove)
          .get(app.api.category.getById)
+         .put(app.api.category.save)
+         .delete(app.api.category.remove)
 }

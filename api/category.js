@@ -1,11 +1,11 @@
 module.exports =  app => {
-    const { existsOrError, notExistsOrError, EqualOrError } = app.api.validation
+    const { existsOrError, notExistsOrError } = app.api.validation
 
     const save = (req, res)=> {
         const category = { ...req.body }
 
-        if( req.params.body )  category.id = req.params.id
-
+        if( req.params.id )  category.id = req.params.id
+        
         try{
             existsOrError( category.name, 'Nome não informado' )
         }catch(msg){
@@ -28,19 +28,24 @@ module.exports =  app => {
 
     const remove = async (req, res) => {
         try {
-            const subCategory = await app.db('categories').where({ parentId: req.body.id})
-
+            const { id } = req.params
+            
+            const subCategory = await app.db('categories').where({ parantId: id })
+            
             notExistsOrError(subCategory, 'Categoria possui subcategorias')
 
-            const article = await app.db('categories').where({ categoryId: req.body.id})
+            const article = await app.db('articles').where({ categoryId: id })
 
             notExistsOrError(article, 'Categoria possui artigos')
 
-            const rowDeleted = await app.db('categories').where({ id: req.body.id}).del()
+            const rowDeleted = await app.db('categories').where({ id }).del()
 
-            ExistsOrError(rowDeleted, 'Categoria não encontrada')
-                                            
+            existsOrError(rowDeleted, 'Categoria não encontrada')
+            
+            res.status(200).send()
+
         }catch(msg){
+            console.log(msg)
             res.status(400).send(msg)
         }
     }
@@ -48,12 +53,12 @@ module.exports =  app => {
     const withPath = categories => {
         const getParent = ( categories, parentId ) => {
             const patents = categories.filter( parent => parent.id === parentId )
-            return patents.length > 0 ? parent[0] : null
+            return patents.length > 0 ? patents[0] : null
         }
 
         const categoriesWithPath = categories.map( category => {
             let path = category.name
-            let parent = getParent( categories, category.parentId )
+            let parent = getParent( categories, category.parantId )
             
             while(parent){
                 path = `${parent.name} > ${path}`
@@ -76,7 +81,7 @@ module.exports =  app => {
 
     const get = ( req, res ) => {
         app.db('categories').then( categories => res.json( withPath(categories) ) )
-            .catch( err => res.status(500).send({err}) )  
+            .catch( console.log )  
     }
 
     const getById = ( req, res ) => {

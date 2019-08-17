@@ -1,5 +1,11 @@
 module.exports = app => {
+    
     const { user } = app.api
+    const { sigin, validateToken } = app.api.auth
+
+    app.post('/sinup', user.save )
+    app.post('/sinin', sigin )
+    app.post('/validateToken', validateToken )
 
     app.route('/users')
        .post(user.save)
@@ -33,5 +39,7 @@ module.exports = app => {
         .get(article.getById)
         .put(article.save)
         .delete(article.remove)
-        
+
+    app.route('/categories/:id/articles')
+        .get(app.api.articles.getByCategory)
 }

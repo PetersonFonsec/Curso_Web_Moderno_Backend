@@ -1,18 +1,37 @@
 module.exports = app => {
+    const { user } = app.api
+
     app.route('/users')
-       .post(app.api.user.save)
-       .get(app.api.user.get)
+       .post(user.save)
+       .get(user.get)
 
     app.route('/users/:id')
-        .put(app.api.user.save)
-        .get(app.api.user.getById)
-
+        .put(user.save)
+        .get(user.getById)
+    
+    const { category } = app.api
+    
     app.route('/categories')
-        .post(app.api.category.save)
-        .get(app.api.category.get)
+        .post(category.save)
+        .get(category.get)
 
-     app.route('/categories/:id')
-         .get(app.api.category.getById)
-         .put(app.api.category.save)
-         .delete(app.api.category.remove)
+    app.route('/categories/tree')
+        .get(category.getTree)
+
+    app.route('/categories/:id')
+         .get(category.getById)
+         .put(category.save)
+         .delete(category.remove)
+
+    const { article } = app.api
+
+    app.route('/articles')
+        .get(article.get)
+        .post(article.save)
+
+    app.route('/articles/:id')
+        .get(article.getById)
+        .put(article.save)
+        .delete(article.remove)
+        
 }

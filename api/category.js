@@ -92,5 +92,32 @@ module.exports =  app => {
            .catch( err => res.status(500).send({err}) )  
     }
 
-    return { save, get, getById, remove }
+    const toFree = ( categories, tree )=> {
+        
+        if( !tree ) tree = categories.filter( c => !c.parantId )
+        
+        tree = tree.map(parentNode => { 
+
+            const isChild = node => node.parantId === parentNode.id
+            
+            parentNode.children = toFree(categories, categories.filter( isChild ) )
+            
+            return parentNode
+        })
+
+        return tree
+    }
+    
+    const getTree = ( req, res ) => {
+
+        const Composer = ( f, x ) => y => f( x(y) )
+        
+        const Response = categories => res.json( Composer( toFree, withPath )(categories) )
+        
+        app.db('categories')
+            .then( Response )
+            .catch( err => res.status(500).send({err}) )
+    }
+    
+    return { save, get, getById, remove, getTree }
 }

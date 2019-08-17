@@ -12,10 +12,10 @@ module.exports = app =>{
         if( !email || !password ) return err('Informe usuário e senha!')
 
         const user = await app.db('users').where({ email }).first()
-
+        
         if( !user ) return err('Usuário não encontrado', 400)
 
-        const isMatch = bcrypt.compareSync(password)
+        const isMatch = bcrypt.compareSync(password, user.password)
         
         if(!isMatch) return err('Senha e ou Email inválidos', 400)
 

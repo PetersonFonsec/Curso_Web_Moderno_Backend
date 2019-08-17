@@ -9,7 +9,7 @@ module.exports = app => {
         jwtFromRequest : ExtractJwt.fromAuthHeaderAsBearerToken()
     }
 
-    const strategy = new Strategy(params, ( payload, done ) => {
+    const strategy = new Strategy( params, ( payload, done ) => {
         app.db('users')
             .where({ id: payload.id })
             .first()

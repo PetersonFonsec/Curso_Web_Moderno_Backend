@@ -18,6 +18,7 @@ module.exports = app => {
     app.route('/users/:id')
         .all(authenticate())
         .put( admin(user.save) )
+        .delete( admin(user.remove) )
         .get(user.getById)
     
     const { category } = app.api

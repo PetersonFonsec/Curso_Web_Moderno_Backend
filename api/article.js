@@ -5,7 +5,7 @@ module.exports = app => {
     
     const save = (req, res) => {
         const article = { ...req.body }
-
+        
         try{
             const { name, description, categoryId, userId, content} = article
 
@@ -34,8 +34,8 @@ module.exports = app => {
     }
     
     const remove = (req, res) => {
-        const { id } = req.body
-
+        const { id } = req.params
+        
         try{
             app.db('articles')
                 .where({ id })
@@ -43,19 +43,19 @@ module.exports = app => {
                 .then( rowsDroped => res.status(200).send() )
                 .catch( err => res.status(500).send({err}) )   
         }catch(err){
-            returnres.status(500).send( { err } ) 
+            return res.status(500).send( { err } ) 
         }
     }
     
-    const limit = 10
+    const limit = 5
     
     const get = async (req, res) => {
         const page = req.query.page || 1
 
-        const result = await app.db('article').count('id').first()
+        const result = await app.db('articles').count('id').first()
         const count = parseInt(result.count)
 
-        await app.db('article')
+        await app.db('articles')
                 .select('id', 'name', 'description')
                 .limit(limit)
                 .offset(page * limit - limit )

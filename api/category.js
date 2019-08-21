@@ -62,11 +62,10 @@ module.exports =  app => {
             
             while(parent){
                 path = `${parent.name} > ${path}`
-                parent = getParent(categories, parent.parentId)
+                parent = getParent(categories, parent.parantId)
             }
 
             return { ...category, path }
-
         })
 
         categoriesWithPath.sort( (a,b) =>{
